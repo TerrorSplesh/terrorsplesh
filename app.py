@@ -101,9 +101,9 @@ def parse_hawk(url):
     except Exception as e:
         return [], f"Error: {str(e)}"
 
-def get_odds(teams):
+def get_odds(teams, match_url=None):
     from selenium_parser import get_all_odds as get_odds_internal
-    return get_odds_internal(teams)
+    return get_odds_internal(teams, match_url=match_url)
 
 col1, col2 = st.columns([2, 1])
 
@@ -130,7 +130,7 @@ if match_url:
         
         st.subheader("📊 Коэффициенты на победу в серии")
         
-        odds = get_odds(teams)
+        odds = get_odds(teams, match_url=match_url)
         
         best_team1 = max(odds.items(), key=lambda x: x[1]['team1'])
         best_team2 = max(odds.items(), key=lambda x: x[1]['team2'])
@@ -166,7 +166,7 @@ if match_url:
                     st.write(str(od))
         
         st.divider()
-        st.info("💡 Коэффициенты получены через Selenium. Если значение N/A - парсинг не нашел данные.")
+        st.info("💡 Коэффициенты взяты с hawk.live (партнер GGBet).")
         
     else:
         st.error(f"Не удалось распознать команды: {tournament}")
