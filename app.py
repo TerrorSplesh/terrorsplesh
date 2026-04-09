@@ -2,8 +2,6 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 import re
-from datetime import datetime
-from selenium_parser import get_all_odds
 
 BOOKMAKERS = [
     "parimatch",
@@ -60,32 +58,42 @@ st.markdown("""
 
 st.markdown('<p class="title">🎮 Betting Odds Comparator</p>', unsafe_allow_html=True)
 
-def parse_liquipedia(url):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    }
-    
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+}
+
+def parse_hawk(url):
     try:
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=HEADERS, timeout=15)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, 'lxml')
         
         teams = []
-        team_elements = soup.select('.team-name, .teamcell, .team a')
+        team_elements = soup.select('.match .teams img[alt]')
         for elem in team_elements[:2]:
-            team_name = elem.get_text(strip=True)
-            if team_name:
-                teams.append(team_name)
+            alt = elem.get('alt', '')
+            if alt:
+                teams.append(alt.strip())
         
         if len(teams) < 2:
-            title = soup.select_one('h1, .page-title')
-            if title:
-                match_title = title.get_text(strip=True)
-                parts = re.split(r' vs | против | - ', match_title, flags=re.IGNORECASE)
+            team_text = soup.select('.match .teams')
+            if team_text:
+                text = team_text[0].get_text(strip=True)
+                parts = re.split(r'\s+vs\s+|\s+-\s+', text, flags=re.IGNORECASE)
                 if len(parts) >= 2:
                     teams = [parts[0].strip(), parts[1].strip()]
         
-        tournament_elem = soup.select_one('.tournament, .event, .prizepool')
+        if len(teams) < 2:
+            title = soup.select_one('h1, .page-title, .match-title')
+            if title:
+                match_title = title.get_text(strip=True)
+                parts = re.split(r'\s+vs\s+|\s+против\s+|\s+-\s+', match_title, flags=re.IGNORECASE)
+                if len(parts) >= 2:
+                    teams = [parts[0].strip(), parts[1].strip()]
+        
+        tournament_elem = soup.select_one('.tournament, .event, .series, [class*="tournament"]')
         tournament = tournament_elem.get_text(strip=True) if tournament_elem else "Unknown Tournament"
         
         return teams, tournament
@@ -94,12 +102,13 @@ def parse_liquipedia(url):
         return [], f"Error: {str(e)}"
 
 def get_odds(teams):
-    return get_all_odds(teams)
+    from selenium_parser import get_all_odds as get_odds_internal
+    return get_odds_internal(teams)
 
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    match_url = st.text_input("🔗 Liquipedia Match URL", placeholder="https://liquipedia.net/...")
+    match_url = st.text_input("🔗 Hawk Live Match URL", placeholder="https://hawk.live/dota-2/matches/...")
 
 with col2:
     st.write("")
@@ -107,7 +116,7 @@ with col2:
     refresh_btn = st.button("🔄 Parse Match", use_container_width=True)
 
 if match_url:
-    teams, tournament = parse_liquipedia(match_url)
+    teams, tournament = parse_hawk(match_url)
     
     if teams and len(teams) >= 2:
         team1, team2 = teams[0], teams[1]
@@ -162,7 +171,7 @@ if match_url:
     else:
         st.error(f"Не удалось распознать команды: {tournament}")
 else:
-    st.info("👆 Введите ссылку на матч с Liquipedia, чтобы начать")
+    st.info("👆 Введите ссылку на матч с Hawk Live, чтобы начать")
     
     st.subheader("📋 Список букмекеров")
     for bm in BOOKMAKERS:
