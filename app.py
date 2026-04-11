@@ -2,6 +2,7 @@ from flask import Flask, render_template_string, jsonify, request
 import requests
 import json
 import re
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -57,32 +58,55 @@ def get_odds(match_url):
             return {}
         
         all_odds = {}
-        matches = series_data.get('matches', [])
         
-        for match in matches:
-            odds_bundles = match.get('oddsBundles', [])
-            for bundle in odds_bundles:
-                provider = bundle.get('oddsProviderCodeName', '')
-                is_team1_first = bundle.get('isTeam1First', True)
-                odds_list = bundle.get('odds', [])
+        moneylines = series_data.get('moneylines', [])
+        if moneylines:
+            for ml in moneylines:
+                provider = ml.get('oddsProviderCodeName', '')
+                t1 = ml.get('team1WinOdds', '')
+                t2 = ml.get('team2WinOdds', '')
                 
-                for odd_item in odds_list:
-                    t1_raw = odd_item.get('firstTeamWin')
-                    t2_raw = odd_item.get('secondTeamWin')
+                if t1 and t2:
+                    if provider == 'ggbet':
+                        all_odds['ggbet'] = {'team1': t1, 'team2': t2}
+                    elif provider == 'parimatch':
+                        all_odds['parimatch'] = {'team1': t1, 'team2': t2}
+                    elif provider == 'betboom':
+                        all_odds['betboom'] = {'team1': t1, 'team2': t2}
+                    elif provider == 'spin-better':
+                        all_odds['spinbetter'] = {'team1': t1, 'team2': t2}
+        
+        if not all_odds:
+            matches = series_data.get('matches', [])
+            for match in matches:
+                odds_bundles = match.get('oddsBundles', [])
+                
+                for bundle in odds_bundles:
+                    provider = bundle.get('oddsProviderCodeName', '')
+                    is_team1_first = bundle.get('isTeam1First', True)
+                    odds_list = bundle.get('odds', [])
                     
-                    if t1_raw and t2_raw:
-                        t1_odd = t1_raw if is_team1_first else t2_raw
-                        t2_odd = t2_raw if is_team1_first else t1_raw
+                    valid_odds = None
+                    for odd_item in reversed(odds_list):
+                        t1_raw = odd_item.get('firstTeamWin')
+                        t2_raw = odd_item.get('secondTeamWin')
                         
+                        if t1_raw and t2_raw:
+                            valid_odds = {
+                                'team1': t1_raw if is_team1_first else t2_raw,
+                                'team2': t2_raw if is_team1_first else t1_raw
+                            }
+                            break
+                    
+                    if valid_odds:
                         if provider == 'ggbet':
-                            all_odds['ggbet'] = {'team1': t1_odd, 'team2': t2_odd}
+                            all_odds['ggbet'] = valid_odds
                         elif provider == 'parimatch':
-                            all_odds['parimatch'] = {'team1': t1_odd, 'team2': t2_odd}
+                            all_odds['parimatch'] = valid_odds
                         elif provider == 'betboom':
-                            all_odds['betboom'] = {'team1': t1_odd, 'team2': t2_odd}
+                            all_odds['betboom'] = valid_odds
                         elif provider == 'spin-better':
-                            all_odds['spinbetter'] = {'team1': t1_odd, 'team2': t2_odd}
-                        break
+                            all_odds['spinbetter'] = valid_odds
         
         return all_odds
     except:
@@ -297,8 +321,6 @@ def home():
 
 @app.route('/api/odds')
 def api_odds():
-    from datetime import datetime
-    
     match_url = request.args.get('url', '')
     if not match_url:
         return jsonify({"error": "No URL"})
