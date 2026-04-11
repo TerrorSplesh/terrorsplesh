@@ -34,8 +34,42 @@ def parse_hawk_odds(match_url):
         
         all_odds = {}
         
-        moneylines = series_data.get('moneylines', [])
-        if moneylines:
+        matches = series_data.get('matches', [])
+        if matches:
+            first_match = matches[0]
+            odds_bundles = first_match.get('oddsBundles', [])
+            
+            for bundle in odds_bundles:
+                provider = bundle.get('oddsProviderCodeName', '')
+                is_team1_first = bundle.get('isTeam1First', True)
+                odds_list = bundle.get('odds', [])
+                
+                if not odds_list:
+                    continue
+                    
+                first_odds = odds_list[0]
+                t1_raw = first_odds.get('firstTeamWin', '')
+                t2_raw = first_odds.get('secondTeamWin', '')
+                
+                if not t1_raw or not t2_raw:
+                    continue
+                
+                if is_team1_first:
+                    t1, t2 = t1_raw, t2_raw
+                else:
+                    t2, t1 = t1_raw, t2_raw
+                
+                if provider == 'ggbet':
+                    all_odds['ggbet'] = {'team1': t1, 'team2': t2}
+                elif provider == 'parimatch':
+                    all_odds['parimatch'] = {'team1': t1, 'team2': t2}
+                elif provider == 'betboom':
+                    all_odds['betboom'] = {'team1': t1, 'team2': t2}
+                elif provider == 'spin-better':
+                    all_odds['spinbetter'] = {'team1': t1, 'team2': t2}
+        
+        if not all_odds:
+            moneylines = series_data.get('moneylines', [])
             for ml in moneylines:
                 provider = ml.get('oddsProviderCodeName', '')
                 t1 = ml.get('team1WinOdds', '')
@@ -49,36 +83,6 @@ def parse_hawk_odds(match_url):
                     all_odds['betboom'] = {'team1': t1, 'team2': t2}
                 elif provider == 'spin-better':
                     all_odds['spinbetter'] = {'team1': t1, 'team2': t2}
-        
-        if not all_odds:
-            matches = series_data.get('matches', [])
-            if matches:
-                first_match = matches[0]
-                odds_bundles = first_match.get('oddsBundles', [])
-                
-                for bundle in odds_bundles:
-                    provider = bundle.get('oddsProviderCodeName', '')
-                    is_team1_first = bundle.get('isTeam1First', True)
-                    odds_list = bundle.get('odds', [])
-                    
-                    if odds_list:
-                        first_odds = odds_list[0]
-                        t1_raw = first_odds.get('firstTeamWin', '')
-                        t2_raw = first_odds.get('secondTeamWin', '')
-                        
-                        if is_team1_first:
-                            t1, t2 = t1_raw, t2_raw
-                        else:
-                            t2, t1 = t1_raw, t2_raw
-                        
-                        if provider == 'ggbet':
-                            all_odds['ggbet'] = {'team1': t1, 'team2': t2}
-                        elif provider == 'parimatch':
-                            all_odds['parimatch'] = {'team1': t1, 'team2': t2}
-                        elif provider == 'betboom':
-                            all_odds['betboom'] = {'team1': t1, 'team2': t2}
-                        elif provider == 'spin-better':
-                            all_odds['spinbetter'] = {'team1': t1, 'team2': t2}
         
         return all_odds
         
