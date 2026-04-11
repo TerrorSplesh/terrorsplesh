@@ -13,7 +13,7 @@ HEADERS = {
     'Cache-Control': 'no-cache',
 }
 
-HERO_WIN_RATES = {
+HERO_WIN_RATES_PUB = {
     "Phantom Assassin": 50.4, "Spirit Breaker": 51.9, "Queen of Pain": 50.3,
     "Juggernaut": 51.5, "Faceless Void": 53.3, "Lifestealer": 52.5,
     "Doom": 47.0, "Meepo": 49.4, "Invoker": 53.1, "Tidehunter": 51.6,
@@ -23,43 +23,108 @@ HERO_WIN_RATES = {
     "Anti-Mage": 51.2, "Riki": 50.1, "Slark": 51.5, "Sven": 52.0,
     "Wraith King": 50.3, "Kunkka": 49.5, "Huskar": 48.2, "Drow Ranger": 53.5,
     "Lycan": 48.5, "Luna": 51.8, "Dragon Knight": 49.2, "Medusa": 50.5,
-    "Timberaw": 50.8, "Batrider": 51.2, "Clinkz": 50.5, "Bounty Hunter": 52.0,
-    "Ursa": 51.5, "Techies": 48.0, "Templar Assassin": 52.3, "Nyx Assassin": 53.8,
-    "Visage": 47.5, "Silencer": 49.0, "Necrophos": 51.0, "Warlock": 48.5,
-    "Beastmaster": 50.8, "Sand King": 51.2, "Enigma": 50.5, "Pugna": 51.0,
-    "Dark Seer": 49.8, "Bane": 48.5, "Lich": 52.0, "Lion": 51.5,
-    "Witch Doctor": 51.9, "Jakiro": 50.2, "Crystal Maiden": 52.5,
-    "Ogre Magi": 51.8, "Skywrath Mage": 50.0, "Ancient Apparition": 51.2,
-    "Shadow Shaman": 50.5, "Rubick": 52.0, "Disruptor": 50.8,
-    "Oracle": 51.5, "Winter Wyvern": 49.5, "Treant Protector": 48.8,
-    "Omniknight": 52.0, "Abaddon": 50.5, "Dazzle": 51.0, "Phoenix": 49.2,
-    "Elder Titan": 48.5, "Legion Commander": 52.3, "Magnus": 50.8,
-    "Timbersaw": 50.5, "Brewmaster": 49.8, "Tusk": 51.2,
-    "Chaos Knight": 52.5, "Tremor": 53.0, "Night Stalker": 51.5,
-    "Slardar": 51.2, "Gyrocopter": 49.5, "Hoodwink": 52.8,
-    "Dawnbreaker": 50.2, "Marci": 51.0, "Ringmaster": 48.5,
+    "Batrider": 51.2, "Clinkz": 50.5, "Bounty Hunter": 52.0, "Ursa": 51.5,
+    "Templar Assassin": 52.3, "Nyx Assassin": 53.8, "Visage": 47.5,
+    "Silencer": 49.0, "Necrophos": 51.0, "Warlock": 48.5, "Beastmaster": 50.8,
+    "Sand King": 51.2, "Enigma": 50.5, "Pugna": 51.0, "Dark Seer": 49.8,
+    "Lich": 52.0, "Lion": 51.5, "Witch Doctor": 51.9, "Jakiro": 50.2,
+    "Crystal Maiden": 52.5, "Ogre Magi": 51.8, "Skywrath Mage": 50.0,
+    "Ancient Apparition": 51.2, "Shadow Shaman": 50.5, "Rubick": 52.0,
+    "Disruptor": 50.8, "Oracle": 51.5, "Winter Wyvern": 49.5,
+    "Treant Protector": 48.8, "Omniknight": 52.0, "Abaddon": 50.5,
+    "Dazzle": 51.0, "Phoenix": 49.2, "Elder Titan": 48.5,
+    "Legion Commander": 52.3, "Magnus": 50.8, "Timbersaw": 50.5,
+    "Brewmaster": 49.8, "Tusk": 51.2, "Chaos Knight": 52.5,
+    "Night Stalker": 51.5, "Slardar": 51.2, "Gyrocopter": 49.5,
+    "Hoodwink": 52.8, "Dawnbreaker": 50.2, "Marci": 51.0,
     "Void Spirit": 52.5, "Snapfire": 50.8, "Pangolier": 50.5,
     "Grimstroke": 51.2, "Primal Beast": 49.8, "Spectre": 50.5,
     "Weaver": 51.5, "Phantom Lancer": 58.5, "Ember Spirit": 51.0,
     "Leshrac": 48.5, "Death Prophet": 50.5, "Puck": 51.2,
     "Windranger": 50.8, "Zeus": 52.0, "Lina": 51.5,
     "Enchantress": 48.5, "Nature's Prophet": 50.2, "Arc Warden": 49.5,
-    "Sniper": 52.3, "Ratt": 50.8, "Brewmaster": 49.8, "Puck": 51.2,
-    "Sand King": 51.2, "Necrophos": 51.0, "Razor": 49.5, "Viper": 50.5,
-    "Venomancer": 50.0, "Necrophos": 51.0, "Silencer": 49.0,
-    "Warlock": 48.5, "Shadow Demon": 49.5, "Dota": 50.0,
+    "Ratt": 50.8, "Necrophos": 51.0, "Silencer": 49.0,
+    "Viper": 50.5, "Venomancer": 50.0, "Shadow Demon": 49.5,
 }
 
-def get_hero_winrate(hero_name):
+HERO_WIN_RATES_PRO = {
+    "Phantom Assassin": 48.5, "Spirit Breaker": 53.7, "Queen of Pain": 50.3,
+    "Juggernaut": 49.2, "Faceless Void": 52.0, "Lifestealer": 48.0,
+    "Doom": 52.5, "Meepo": 54.0, "Invoker": 52.5, "Tidehunter": 53.5,
+    "Chen": 56.0, "Keeper of the Light": 55.2, "Earthshaker": 52.8,
+    "Axe": 51.0, "Pudge": 45.0, "Bloodseeker": 48.5, "Shadow Fiend": 49.0,
+    "Sniper": 47.5, "Morphling": 55.5, "Mirana": 51.2, "Storm Spirit": 53.8,
+    "Anti-Mage": 54.0, "Riki": 46.5, "Slark": 50.5, "Sven": 53.0,
+    "Wraith King": 51.5, "Kunkka": 52.0, "Huskar": 54.5, "Drow Ranger": 49.0,
+    "Lycan": 55.0, "Luna": 48.5, "Dragon Knight": 52.5, "Medusa": 51.0,
+    "Batrider": 58.5, "Clinkz": 51.0, "Bounty Hunter": 49.5, "Ursa": 47.0,
+    "Templar Assassin": 53.0, "Nyx Assassin": 52.5, "Visage": 54.0,
+    "Silencer": 53.0, "Necrophos": 52.0, "Warlock": 55.5, "Beastmaster": 56.0,
+    "Sand King": 53.5, "Enigma": 57.0, "Pugna": 49.0, "Dark Seer": 55.5,
+    "Lich": 50.5, "Lion": 49.5, "Witch Doctor": 51.0, "Jakiro": 52.0,
+    "Crystal Maiden": 47.5, "Ogre Magi": 50.5, "Skywrath Mage": 46.0,
+    "Ancient Apparition": 52.5, "Shadow Shaman": 51.0, "Rubick": 54.5,
+    "Disruptor": 55.0, "Oracle": 53.5, "Winter Wyvern": 54.0,
+    "Treant Protector": 56.5, "Omniknight": 50.0, "Abaddon": 49.0,
+    "Dazzle": 51.5, "Phoenix": 55.0, "Elder Titan": 55.5,
+    "Legion Commander": 51.0, "Magnus": 56.5, "Timbersaw": 52.5,
+    "Brewmaster": 57.0, "Tusk": 52.0, "Chaos Knight": 48.5,
+    "Night Stalker": 53.5, "Slardar": 52.0, "Gyrocopter": 51.5,
+    "Hoodwink": 50.0, "Dawnbreaker": 52.0, "Marci": 48.0,
+    "Void Spirit": 54.5, "Snapfire": 51.0, "Pangolier": 53.0,
+    "Grimstroke": 54.0, "Primal Beast": 51.5, "Spectre": 52.5,
+    "Weaver": 49.5, "Phantom Lancer": 51.0, "Ember Spirit": 53.0,
+    "Leshrac": 54.5, "Death Prophet": 52.5, "Puck": 55.0,
+    "Windranger": 52.0, "Zeus": 49.0, "Lina": 50.5,
+    "Enchantress": 55.5, "Nature's Prophet": 53.0, "Arc Warden": 56.0,
+}
+
+HERO_PRO_PICK_RATE = {
+    "Batrider": 15.2, "Visage": 8.5, "Chen": 7.8, "Magnus": 12.5,
+    "Dark Seer": 9.2, "Enigma": 6.5, "Rubick": 14.0, "Puck": 11.8,
+    "Storm Spirit": 10.5, "Templar Assassin": 9.8, "Ember Spirit": 11.2,
+    "Void Spirit": 8.8, "Hoodwink": 7.5, "Monkey King": 10.0,
+    "Snapfire": 6.2, "Grimstroke": 9.5, "Pangolier": 8.2,
+    "Marci": 5.5, "Dawnbreaker": 7.0, "Primal Beast": 6.8,
+    "Winter Wyvern": 8.5, "Oracle": 7.2, "Disruptor": 9.0,
+    "Phoenix": 8.0, "Legion Commander": 12.0, "Night Stalker": 7.5,
+    "Slardar": 8.8, "Brewmaster": 6.5, "Tusk": 7.8,
+    "Sand King": 10.2, "Beastmaster": 5.8, "Nature's Prophet": 9.2,
+}
+
+def get_hero_winrate(hero_name, mode='both'):
     if not hero_name:
         return 50.0
     
     hero_normalized = hero_name.lower().replace(' ', '').replace('_', '').replace('-', '')
     
-    for hr_name, wr in HERO_WIN_RATES.items():
+    def find_match(db):
+        for hr_name, wr in db.items():
+            hr_normalized = hr_name.lower().replace(' ', '').replace('_', '').replace('-', '')
+            if hero_normalized in hr_normalized or hr_normalized in hero_normalized:
+                return wr
+        return None
+    
+    if mode == 'pub':
+        return find_match(HERO_WIN_RATES_PUB) or 50.0
+    elif mode == 'pro':
+        return find_match(HERO_WIN_RATES_PRO) or 50.0
+    else:
+        pub = find_match(HERO_WIN_RATES_PUB) or 50.0
+        pro = find_match(HERO_WIN_RATES_PRO) or 50.0
+        return (pub + pro) / 2
+
+def get_hero_pro_strength(hero_name):
+    if not hero_name:
+        return 50.0
+    
+    hero_normalized = hero_name.lower().replace(' ', '').replace('_', '').replace('-', '')
+    
+    for hr_name, wr in HERO_WIN_RATES_PRO.items():
         hr_normalized = hr_name.lower().replace(' ', '').replace('_', '').replace('-', '')
         if hero_normalized in hr_normalized or hr_normalized in hero_normalized:
-            return wr
+            pick_rate = HERO_PRO_PICK_RATE.get(hr_name, 5.0)
+            return round(wr + (pick_rate * 0.1), 1)
     
     return 50.0
 
@@ -110,35 +175,55 @@ def parse_hawk(url):
         print(f"Parse error: {e}")
         return {"teams": [], "tournament": "Error", "picks": {"team1": [], "team2": []}}
 
-def calculate_team_strength(picks):
+def calculate_team_stats(picks, mode='both'):
     if not picks:
-        return 50.0
+        return {"avg_pub": 50.0, "avg_pro": 50.0, "avg_both": 50.0, "pro_strength": 50.0}
     
-    total = 0
+    pub_total, pro_total, both_total, pro_strength_total = 0, 0, 0, 0
     count = 0
+    
     for hero in picks:
-        wr = get_hero_winrate(hero)
-        total += wr
+        pub_wr = get_hero_winrate(hero, 'pub')
+        pro_wr = get_hero_winrate(hero, 'pro')
+        pro_str = get_hero_pro_strength(hero)
+        
+        pub_total += pub_wr
+        pro_total += pro_wr
+        both_total += (pub_wr + pro_wr) / 2
+        pro_strength_total += pro_str
         count += 1
     
-    return round(total / count, 1) if count > 0 else 50.0
+    if count == 0:
+        return {"avg_pub": 50.0, "avg_pro": 50.0, "avg_both": 50.0, "pro_strength": 50.0}
+    
+    return {
+        "avg_pub": round(pub_total / count, 1),
+        "avg_pro": round(pro_total / count, 1),
+        "avg_both": round(both_total / count, 1),
+        "pro_strength": round(pro_strength_total / count, 1)
+    }
 
 def calculate_advantage(team1_picks, team2_picks):
     if not team1_picks and not team2_picks:
-        return 50, 50
+        return 50, 50, {}, {}
     
-    team1_strength = calculate_team_strength(team1_picks)
-    team2_strength = calculate_team_strength(team2_picks)
+    t1_stats = calculate_team_stats(team1_picks)
+    t2_stats = calculate_team_stats(team2_picks)
     
-    diff = team1_strength - team2_strength
+    diff_pub = t1_stats['avg_pub'] - t2_stats['avg_pub']
+    diff_pro = t1_stats['avg_pro'] - t2_stats['avg_pro']
+    diff_both = t1_stats['avg_both'] - t2_stats['avg_both']
+    diff_strength = t1_stats['pro_strength'] - t2_stats['pro_strength']
     
-    team1_adv = 50 + diff
-    team2_adv = 50 - diff
+    combined_diff = (diff_both * 0.4) + (diff_strength * 0.4) + (diff_pro * 0.2)
+    
+    team1_adv = 50 + combined_diff
+    team2_adv = 50 - combined_diff
     
     team1_adv = max(5, min(95, team1_adv))
     team2_adv = 100 - team1_adv
     
-    return team1_adv, team2_adv
+    return team1_adv, team2_adv, t1_stats, t2_stats
 
 def get_odds(match_url):
     try:
@@ -227,7 +312,7 @@ HTML = '''
             color: #fff;
             padding: 20px;
         }
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 950px; margin: 0 auto; }
         h1 {
             font-size: 2.5rem;
             color: #ff6b35;
@@ -282,8 +367,8 @@ HTML = '''
         }
         .advantage-bar {
             display: flex;
-            height: 30px;
-            border-radius: 15px;
+            height: 40px;
+            border-radius: 20px;
             overflow: hidden;
             margin: 15px 0;
             background: #1e1e2e;
@@ -313,6 +398,31 @@ HTML = '''
             color: #888;
             margin-bottom: 10px;
         }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .stat-card {
+            flex: 1;
+            background: #1e1e2e;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-title {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .stat-pub { color: #4ade80; }
+        .stat-pro { color: #f472b6; }
+        .stat-combo { color: #fbbf24; }
         table { width: 100%; border-collapse: collapse; }
         th, td {
             padding: 12px;
@@ -332,6 +442,15 @@ HTML = '''
             color: #888;
             margin-top: 20px;
             font-size: 0.9rem;
+        }
+        .method-info {
+            background: #252540;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 15px;
+            text-align: center;
         }
     </style>
 </head>
@@ -357,6 +476,48 @@ HTML = '''
             </div>
             
             {% if team1_advantage > 0 or team2_advantage > 0 %}
+            <div class="method-info">
+                📊 Метод: Pub Winrate (40%) + Pro Winrate (20%) + Pro Strength (40%)
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-title">{{ teams[0] }} - Pub WR</div>
+                    <div class="stat-value stat-pub">{{ team1_stats.avg_pub }}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">{{ teams[0] }} - Pro WR</div>
+                    <div class="stat-value stat-pro">{{ team1_stats.avg_pro }}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">{{ teams[0] }} - Combo</div>
+                    <div class="stat-value stat-combo">{{ team1_stats.avg_both }}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">{{ teams[0] }} - Pro Strength</div>
+                    <div class="stat-value stat-combo">{{ team1_stats.pro_strength }}%</div>
+                </div>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-title">{{ teams[1] }} - Pub WR</div>
+                    <div class="stat-value stat-pub">{{ team2_stats.avg_pub }}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">{{ teams[1] }} - Pro WR</div>
+                    <div class="stat-value stat-pro">{{ team2_stats.avg_pro }}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">{{ teams[1] }} - Combo</div>
+                    <div class="stat-value stat-combo">{{ team2_stats.avg_both }}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">{{ teams[1] }} - Pro Strength</div>
+                    <div class="stat-value stat-combo">{{ team2_stats.pro_strength }}%</div>
+                </div>
+            </div>
+            
             <div class="advantage-label">
                 <span>{{ teams[0] }} - {{ team1_advantage }}%</span>
                 <span>🎯 Перевес пика</span>
@@ -425,9 +586,6 @@ HTML = '''
                 
                 if (data.odds) {
                     updateOddsTable(data.odds);
-                    if (data.team1_advantage && data.team2_advantage) {
-                        updateAdvantage(data.team1_advantage, data.team2_advantage);
-                    }
                     document.getElementById('updateTime').textContent = '🔄 Обновлено: ' + data.time;
                 }
             } catch (e) {
@@ -450,19 +608,6 @@ HTML = '''
             });
         }
         
-        function updateAdvantage(t1, t2) {
-            const bar1 = document.querySelector('.advantage-team1');
-            const bar2 = document.querySelector('.advantage-team2');
-            if (bar1) {
-                bar1.style.width = t1 + '%';
-                bar1.textContent = t1 + '%';
-            }
-            if (bar2) {
-                bar2.style.width = t2 + '%';
-                bar2.textContent = t2 + '%';
-            }
-        }
-        
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('url')) {
             document.getElementById('matchUrl').value = urlParams.get('url');
@@ -480,7 +625,7 @@ def home():
     teams_data = parse_hawk(match_url) if match_url else {"teams": [], "tournament": "", "picks": {"team1": [], "team2": []}}
     odds = get_odds(match_url) if match_url else {}
     
-    team1_adv, team2_adv = calculate_advantage(
+    team1_adv, team2_adv, t1_stats, t2_stats = calculate_advantage(
         teams_data.get('picks', {}).get('team1', []),
         teams_data.get('picks', {}).get('team2', [])
     )
@@ -493,7 +638,9 @@ def home():
         odds=odds,
         bookmakers=BOOKMAKERS,
         team1_advantage=team1_adv,
-        team2_advantage=team2_adv
+        team2_advantage=team2_adv,
+        team1_stats=t1_stats,
+        team2_stats=t2_stats
     )
 
 @app.route('/api/odds')
@@ -505,7 +652,7 @@ def api_odds():
     teams_data = parse_hawk(match_url)
     odds = get_odds(match_url)
     
-    team1_adv, team2_adv = calculate_advantage(
+    team1_adv, team2_adv, t1_stats, t2_stats = calculate_advantage(
         teams_data.get('picks', {}).get('team1', []),
         teams_data.get('picks', {}).get('team2', [])
     )
@@ -517,6 +664,8 @@ def api_odds():
         "odds": odds,
         "team1_advantage": team1_adv,
         "team2_advantage": team2_adv,
+        "team1_stats": t1_stats,
+        "team2_stats": t2_stats,
         "time": datetime.now().strftime("%H:%M:%S")
     })
 
