@@ -4,9 +4,11 @@ from bs4 import BeautifulSoup
 import re
 
 BOOKMAKERS = [
+    "ggbet",
     "parimatch",
-    "pinnacle", 
     "betboom",
+    "spinbetter",
+    "pinnacle",
     "fonbet",
     "ray4bet",
     "bet365"
@@ -166,7 +168,7 @@ if match_url:
                     st.write(str(od))
         
         st.divider()
-        st.info("💡 Коэффициенты взяты с hawk.live (партнер GGBet).")
+        st.info("💡 Коэффициенты взяты из API hawk.live")
         
     else:
         st.error(f"Не удалось распознать команды: {tournament}")
