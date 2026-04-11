@@ -2,6 +2,8 @@ import streamlit as st
 import requests
 import json
 import re
+import time
+from datetime import datetime
 
 BOOKMAKERS = [
     "ggbet",
@@ -55,6 +57,10 @@ st.markdown("""
     .stTextInput > div > div > input:focus {
         border-color: #ff6b35;
     }
+    .last-update {
+        font-size: 0.8rem;
+        color: #888;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -65,6 +71,11 @@ HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Accept-Language': 'en-US,en;q=0.5',
 }
+
+if 'refresh_interval' not in st.session_state:
+    st.session_state.refresh_interval = 30
+if 'last_update' not in st.session_state:
+    st.session_state.last_update = None
 
 def parse_hawk(url):
     try:
@@ -107,7 +118,7 @@ def get_odds(teams, match_url=None):
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    match_url = st.text_input("🔗 Hawk Live Match URL", placeholder="https://hawk.live/dota-2/matches/...")
+    match_url = st.text_input("🔗 Hawk Live Match URL", placeholder="https://hawk.live/dota-2/matches/...", key="url_input")
 
 with col2:
     st.write("")
@@ -127,7 +138,10 @@ if match_url:
         </div>
         """, unsafe_allow_html=True)
         
-        st.subheader("📊 Коэффициенты на победу в серии")
+        refresh_interval = st.slider("🔄 Интервал обновления (секунд)", 10, 120, 30, key="refresh_slider")
+        st.session_state.refresh_interval = refresh_interval
+        
+        st.subheader("📊 Коэффициенты на победу в карте")
         
         odds = get_odds(teams, match_url=match_url)
         
@@ -164,8 +178,15 @@ if match_url:
                 else:
                     st.write(str(od))
         
+        st.session_state.last_update = datetime.now().strftime("%H:%M:%S")
+        
+        st.markdown(f'<p class="last-update">🕐 Последнее обновление: {st.session_state.last_update} | Автообновление каждые {refresh_interval} сек</p>', unsafe_allow_html=True)
+        
+        time.sleep(refresh_interval)
+        st.rerun()
+        
         st.divider()
-        st.info("💡 Коэффициенты взяты из API hawk.live")
+        st.info("💡 Коэффициенты взяты из API hawk.live (обновляются автоматически)")
         
     else:
         st.error(f"Не удалось распознать команды: {tournament}")
