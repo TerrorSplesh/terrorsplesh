@@ -13,6 +13,45 @@ HEADERS = {
     'Cache-Control': 'no-cache',
 }
 
+HERO_WIN_RATES = {
+    "Phantom Assassin": 50.4, "Spirit Breaker": 51.9, "Queen of Pain": 50.3,
+    "Juggernaut": 51.5, "Faceless Void": 53.3, "Lifestealer": 52.5,
+    "Doom": 47.0, "Meepo": 49.4, "Invoker": 53.1, "Tidehunter": 51.6,
+    "Chen": 50.7, "Keeper of the Light": 49.1, "Earthshaker": 48.6,
+    "Axe": 51.2, "Pudge": 52.0, "Bloodseeker": 50.8, "Shadow Fiend": 51.5,
+    "Sniper": 52.3, "Morphling": 51.0, "Mirana": 50.5, "Storm Spirit": 52.8,
+    "Anti-Mage": 51.2, "Riki": 50.1, "Slark": 51.5, "Sven": 52.0,
+    "Wraith King": 50.3, "Kunkka": 49.5, "Huskar": 48.2, "Drow Ranger": 53.5,
+    "Lycan": 48.5, "Luna": 51.8, "Dragon Knight": 49.2, "Medusa": 50.5,
+    "Timberaw": 50.8, "Batrider": 51.2, "Clinkz": 50.5, "Bounty Hunter": 52.0,
+    "Ursa": 51.5, "Techies": 48.0, "Templar Assassin": 52.3, "Nyx Assassin": 53.8,
+    "Visage": 47.5, "Silencer": 49.0, "Nature's Prophet": 50.2, "Necrophos": 51.0,
+    "Warlock": 48.5, "Beastmaster": 50.8, "Io": 52.5, "Spiderling": 50.0,
+    "Sand King": 51.2, "Enigma": 50.5, "Pugna": 51.0, "Dark Seer": 49.8,
+    "Bane": 48.5, "Lich": 52.0, "Lion": 51.5, "Witch Doctor": 51.9,
+    "Jakiro": 50.2, "Crystal Maiden": 52.5, "Ogre Magi": 51.8, "Skywrath Mage": 50.0,
+    "Ancient Apparition": 51.2, "Shadow Shaman": 50.5, "Rubick": 52.0,
+    "Disruptor": 50.8, "Oracle": 51.5, "Winter Wyvern": 49.5,
+    "Treant Protector": 48.8, "Omniknight": 52.0, "Abaddon": 50.5,
+    "Dazzle": 51.0, "Shallow Grave": 50.0, "Phoenix": 49.2,
+    "Elder Titan": 48.5, "Legion Commander": 52.3, "Magnus": 50.8,
+    "Timbersaw": 50.5, "Brewmaster": 49.8, "Tusk": 51.2,
+    "Chaos Knight": 52.5, "Thromba": 53.0, "Night Stalker": 51.5,
+    "Bounty Hunter": 52.0, "Ratt": 50.8, "Slardar": 51.2,
+    "Gyrocopter": 49.5, "Hoodwink": 52.8, "Dawnbreaker": 50.2,
+    "Marci": 51.0, "Ringmaster": 48.5, "Void Spirit": 52.5,
+    "Snapfire": 50.8, "Pangolier": 50.5, "Grimstroke": 51.2,
+    "Hoodwink": 52.8, "Dawnbreaker": 50.2, "Primal Beast": 49.8,
+    "Spectre": 50.5, "Chaos Knight": 52.5, "Wraith King": 50.3,
+    "Templar Assassin": 52.3, "Luna": 51.8, "Sven": 52.0,
+    "Weaver": 51.5, "Medusa": 50.5, "Phantom Lancer": 58.5,
+    "Ember Spirit": 51.0, "Storm Spirit": 52.8, "TA": 52.3,
+    "Leshrac": 48.5, "Death Prophet": 50.5, "Puck": 51.2,
+    "Windranger": 50.8, "Zeus": 52.0, "Lina": 51.5,
+    "Shadow Wizard": 50.0, "Enchantress": 48.5, "Chen": 50.7,
+    "Nature's Prophet": 50.2, "Elder Titan": 48.5, "Arc Warden": 49.5,
+}
+
 def parse_hawk(url):
     try:
         response = requests.get(url, headers=HEADERS, timeout=10)
@@ -21,25 +60,60 @@ def parse_hawk(url):
         
         match = re.search(r'data-page="({.*?})"', html)
         if not match:
-            return {"teams": [], "tournament": "Unknown"}
+            return {"teams": [], "tournament": "Unknown", "picks": {"team1": [], "team2": []}}
         
         json_str = match.group(1).replace('&quot;', '"')
         page_data = json.loads(json_str)
         series_data = page_data.get('props', {}).get('seriesPageData', {})
+        
+        team1_picks = []
+        team2_picks = []
         
         if series_data:
             team1_data = series_data.get('team1', {})
             team2_data = series_data.get('team2', {})
             championship = series_data.get('championship', {})
             
+            matches = series_data.get('matches', [])
+            if matches:
+                first_match = matches[0]
+                picks = first_match.get('picks', [])
+                
+                for pick in picks:
+                    hero_name = pick.get('hero', {}).get('name', '')
+                    if hero_name:
+                        hero_name = hero_name.replace('npc_dota_hero_', '').replace('_', ' ').title()
+                        if pick.get('isRadiant'):
+                            team1_picks.append(hero_name)
+                        else:
+                            team2_picks.append(hero_name)
+            
             return {
                 "teams": [team1_data.get('name', ''), team2_data.get('name', '')],
-                "tournament": championship.get('name', 'Unknown')
+                "tournament": championship.get('name', 'Unknown'),
+                "picks": {"team1": team1_picks, "team2": team2_picks}
             }
         
-        return {"teams": [], "tournament": "Unknown"}
-    except:
-        return {"teams": [], "tournament": "Error"}
+        return {"teams": [], "tournament": "Unknown", "picks": {"team1": [], "team2": []}}
+    except Exception as e:
+        print(f"Parse error: {e}")
+        return {"teams": [], "tournament": "Error", "picks": {"team1": [], "team2": []}}
+
+def calculate_team_strength(picks):
+    if not picks:
+        return 0
+    
+    total = 0
+    count = 0
+    for hero in picks:
+        hero_normalized = hero.lower().replace(' ', '').replace('_', '')
+        for hr_name, wr in HERO_WIN_RATES.items():
+            if hero_normalized in hr_name.lower().replace(' ', ''):
+                total += wr
+                count += 1
+                break
+    
+    return round(total / count, 1) if count > 0 else 50.0
 
 def get_odds(match_url):
     try:
@@ -128,7 +202,7 @@ HTML = '''
             color: #fff;
             padding: 20px;
         }
-        .container { max-width: 800px; margin: 0 auto; }
+        .container { max-width: 900px; margin: 0 auto; }
         h1 {
             font-size: 2.5rem;
             color: #ff6b35;
@@ -166,13 +240,37 @@ HTML = '''
         }
         .vs { color: #ff6b35; }
         .tournament { color: #888; font-size: 0.9rem; }
+        .picks-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #252540;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        .pick-hero {
+            display: inline-block;
+            background: #3d3d5c;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin: 2px;
+            font-size: 0.8rem;
+        }
         table { width: 100%; border-collapse: collapse; }
         th, td {
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             border-bottom: 1px solid #3d3d5c;
         }
         th { background: #1e1e2e; }
+        .strength-col { width: 100px; }
+        .strength-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .strength-high { background: linear-gradient(135deg, #00c853 0%, #00e676 100%); color: #000; }
+        .strength-mid { background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%); color: #000; }
+        .strength-low { background: linear-gradient(135deg, #f44336 0%, #e57373 100%); color: #fff; }
         .best-odd {
             background: linear-gradient(135deg, #00c853 0%, #00e676 100%);
             color: #000;
@@ -186,18 +284,6 @@ HTML = '''
             margin-top: 20px;
             font-size: 0.9rem;
         }
-        .loading { opacity: 0.5; }
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ff6b35;
-            border-top: 2px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -213,12 +299,19 @@ HTML = '''
             <div class="match-info">
                 <h2>{{ teams[0] }} <span class="vs">VS</span> {{ teams[1] }}</h2>
                 <p class="tournament">🏆 {{ tournament }}</p>
+                {% if picks.team1 or picks.team2 %}
+                <div class="picks-info">
+                    <p><strong>{{ teams[0] }}:</strong> {% for hero in picks.team1 %}<span class="pick-hero">{{ hero }}</span>{% endfor %}</p>
+                    <p><strong>{{ teams[1] }}:</strong> {% for hero in picks.team2 %}<span class="pick-hero">{{ hero }}</span>{% endfor %}</p>
+                </div>
+                {% endif %}
             </div>
             
             <table>
                 <thead>
                     <tr>
                         <th>Букмекер</th>
+                        <th class="strength-col">🎯 Сила пика</th>
                         <th>{{ teams[0] }}</th>
                         <th>{{ teams[1] }}</th>
                     </tr>
@@ -227,10 +320,17 @@ HTML = '''
                     {% for bookmaker in bookmakers %}
                     <tr>
                         <td><strong>{{ bookmaker }}</strong></td>
+                        <td></td>
                         <td class="team1-{{ bookmaker }}">{{ odds.get(bookmaker, {}).get('team1', 'N/A') }}</td>
                         <td class="team2-{{ bookmaker }}">{{ odds.get(bookmaker, {}).get('team2', 'N/A') }}</td>
                     </tr>
                     {% endfor %}
+                    <tr style="background: #252540;">
+                        <td><strong>📊 STRATZ/D2PT</strong></td>
+                        <td></td>
+                        <td class="team1-strength">{{ team1_strength }}%</td>
+                        <td class="team2-strength">{{ team2_strength }}%</td>
+                    </tr>
                 </tbody>
             </table>
             
@@ -308,15 +408,21 @@ BOOKMAKERS = ["ggbet", "parimatch", "betboom", "spinbetter", "pinnacle", "fonbet
 @app.route('/')
 def home():
     match_url = request.args.get('url', '')
-    teams_data = parse_hawk(match_url) if match_url else {"teams": [], "tournament": ""}
+    teams_data = parse_hawk(match_url) if match_url else {"teams": [], "tournament": "", "picks": {"team1": [], "team2": []}}
     odds = get_odds(match_url) if match_url else {}
+    
+    team1_strength = calculate_team_strength(teams_data.get('picks', {}).get('team1', []))
+    team2_strength = calculate_team_strength(teams_data.get('picks', {}).get('team2', []))
     
     return render_template_string(HTML, 
         match_url=match_url,
         teams=teams_data.get('teams', []),
         tournament=teams_data.get('tournament', ''),
+        picks=teams_data.get('picks', {'team1': [], 'team2': []}),
         odds=odds,
-        bookmakers=BOOKMAKERS
+        bookmakers=BOOKMAKERS,
+        team1_strength=team1_strength,
+        team2_strength=team2_strength
     )
 
 @app.route('/api/odds')
@@ -331,7 +437,10 @@ def api_odds():
     return jsonify({
         "teams": teams_data.get('teams', []),
         "tournament": teams_data.get('tournament', ''),
+        "picks": teams_data.get('picks', {'team1': [], 'team2': []}),
         "odds": odds,
+        "team1_strength": calculate_team_strength(teams_data.get('picks', {}).get('team1', [])),
+        "team2_strength": calculate_team_strength(teams_data.get('picks', {}).get('team2', [])),
         "time": datetime.now().strftime("%H:%M:%S")
     })
 
