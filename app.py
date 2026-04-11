@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
+import json
 import re
 
 BOOKMAKERS = [
@@ -71,6 +72,29 @@ def parse_hawk(url):
         response = requests.get(url, headers=HEADERS, timeout=15)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, 'lxml')
+        
+        script_tag = soup.find('script', {'data-page': True})
+        if script_tag:
+            try:
+                data_attr = script_tag.get('data-page')
+                if data_attr:
+                    page_data = json.loads(data_attr)
+                    series_data = page_data.get('props', {}).get('seriesPageData', {})
+                    
+                    if series_data:
+                        team1_data = series_data.get('team1', {})
+                        team2_data = series_data.get('team2', {})
+                        
+                        team1_name = team1_data.get('name', '')
+                        team2_name = team2_data.get('name', '')
+                        
+                        championship = series_data.get('championship', {})
+                        tournament = championship.get('name', 'Unknown Tournament')
+                        
+                        if team1_name and team2_name:
+                            return [team1_name, team2_name], tournament
+            except Exception as e:
+                print(f"JSON parse error: {e}")
         
         teams = []
         team_elements = soup.select('.match .teams img[alt]')
